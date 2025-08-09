@@ -39,6 +39,7 @@ jobs:
       - name: Set up environment variables
         run: |
           echo "PORT=8080" >> $GITHUB_ENV
+          echo "NODE_ENV=test" >> $GITHUB_ENV
           echo "DATABASE=postgresql://postgres:password@localhost:5432/testdb" >> $GITHUB_ENV
           echo "BETTER_AUTH_SECRET=$(openssl rand -base64 32)" >> $GITHUB_ENV
           echo "BETTER_AUTH_URL=http://localhost:8080" >> $GITHUB_ENV
