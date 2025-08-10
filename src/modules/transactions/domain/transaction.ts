@@ -7,11 +7,11 @@ export enum TransactionType {
   EXPENSE = "EXPENSE",
 }
 
-const TransactionTypeSchema = z.enum(TransactionType);
-const TransactionNameSchema = z.string().trim().min(1);
-const TransactionCategorySchema = z.string().trim().min(1);
-const TransactionAmountSchema = z.number().min(0);
-const TransactionDateSchema = z.date();
+export const TransactionTypeSchema = z.enum(TransactionType);
+export const TransactionNameSchema = z.string().trim().min(1);
+export const TransactionCategorySchema = z.string().trim().min(1);
+export const TransactionAmountSchema = z.number().positive();
+export const TransactionDateSchema = z.date();
 
 export class Transaction {
   public readonly id: TransactionId;

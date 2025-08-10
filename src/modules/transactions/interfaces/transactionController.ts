@@ -1,11 +1,29 @@
 import { NextFunction, Request, Response } from "express";
 import { AddTransaction } from "../application/addTransaction.js";
 import { CalculateMonthlySavings } from "../application/calculateMonthlySavings.js";
-import { InMemoryTransactionRepository } from "../infrastructure/inMemoryTransactionRepository.js";
+import { DrizzleTransactionRepository } from "../infrastructure/drizzleTransactionRepository.js";
+import { z } from "zod";
+import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
+import {
+  TransactionAmountSchema,
+  TransactionCategorySchema,
+  TransactionDateSchema,
+  TransactionNameSchema,
+  TransactionTypeSchema,
+} from "../domain/transaction.js";
 
-const transactionRepo = new InMemoryTransactionRepository()
+const transactionRepo = new DrizzleTransactionRepository();
 const addTransaction = new AddTransaction(transactionRepo);
 const calculateSavings = new CalculateMonthlySavings(transactionRepo);
+
+const transactionSchema = z.object({
+  bankAccountId: z.uuid(),
+  amount: TransactionAmountSchema,
+  name: TransactionNameSchema,
+  category: TransactionCategorySchema,
+  type: TransactionTypeSchema,
+  date: TransactionDateSchema,
+});
 
 export const addTransactionHandler = async (
   req: Request,
@@ -13,14 +31,14 @@ export const addTransactionHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { bankAccountId, name, category, amount, type, date } = req.body;
+    const data = transactionSchema.parse(req.body);
     const transaction = await addTransaction.execute(
-      bankAccountId,
-      name,
-      category,
-      amount,
-      type,
-      new Date(date)
+      data.bankAccountId,
+      data.name,
+      data.category,
+      data.amount,
+      data.type,
+      data.date
     );
     res.status(201).json(transaction);
   } catch (err) {
@@ -34,12 +52,13 @@ export const calculateSavingsHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { bankAccountId, year, month } = req.params;
-    const savings = await calculateSavings.execute(
-      bankAccountId,
-      parseInt(year),
-      parseInt(month)
-    );
+    const querySchema = z.object({
+      bankAccountId: z.uuid(),
+      year: z.string().transform(Number),
+      month: z.string().transform(Number),
+    });
+    const { bankAccountId, year, month } = querySchema.parse(req.params);
+    const savings = await calculateSavings.execute(bankAccountId, year, month);
     res.status(200).json({ savings });
   } catch (err) {
     next(err);
