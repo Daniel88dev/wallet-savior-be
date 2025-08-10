@@ -1,11 +1,7 @@
 import { TransactionId } from "./transactionId.js";
 import { z } from "zod";
 import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
-
-export enum TransactionType {
-  INCOME = "INCOME",
-  EXPENSE = "EXPENSE",
-}
+import { TransactionType } from "../infrastructure/transactionSchema.js";
 
 export const TransactionTypeSchema = z.enum(TransactionType);
 export const TransactionNameSchema = z.string().trim().min(1);

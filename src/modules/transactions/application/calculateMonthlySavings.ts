@@ -1,6 +1,6 @@
 import { TransactionRepository } from "../domain/transactionRepository.js";
 import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
-import { TransactionType } from "../domain/transaction.js";
+import { TransactionType } from "../infrastructure/transactionSchema.js";
 
 export class CalculateMonthlySavings {
   private readonly transactionRepo: TransactionRepository;

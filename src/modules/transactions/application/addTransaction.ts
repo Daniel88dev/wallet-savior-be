@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import { TransactionRepository } from "../domain/transactionRepository.js";
-import { Transaction, TransactionType } from "../domain/transaction.js";
+import { Transaction } from "../domain/transaction.js";
 import { TransactionId } from "../domain/transactionId.js";
 import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
+import { TransactionType } from "../infrastructure/transactionSchema.js";
 
 export class AddTransaction {
   private readonly transactionRepo: TransactionRepository;

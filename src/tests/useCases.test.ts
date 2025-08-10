@@ -4,8 +4,8 @@ import { CreateBankAccount } from "../modules/bankAccount/application/createBank
 import { createUUID } from "../utils/createUUID.js";
 import { AddTransaction } from "../modules/transactions/application/addTransaction.js";
 import { CalculateMonthlySavings } from "../modules/transactions/application/calculateMonthlySavings.js";
-import { TransactionType } from "../modules/transactions/domain/transaction.js";
 import { InMemoryTransactionRepository } from "../modules/transactions/infrastructure/inMemoryTransactionRepository.js";
+import { TransactionType } from "../modules/transactions/infrastructure/transactionSchema.js";
 
 describe("Use Cases", async () => {
   it("should create a bank account", async () => {

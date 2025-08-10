@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { InMemoryTransactionRepository } from "../modules/transactions/infrastructure/inMemoryTransactionRepository.js";
 import { AddTransaction } from "../modules/transactions/application/addTransaction.js";
 import { CalculateMonthlySavings } from "../modules/transactions/application/calculateMonthlySavings.js";
-import { TransactionType } from "../modules/transactions/domain/transaction.js";
 import { createUUID } from "../utils/createUUID.js";
+import { TransactionType } from "../modules/transactions/infrastructure/transactionSchema.js";
 
 describe("CalculateMonthlySavings", () => {
   it("should calculate correct savings", async () => {

@@ -5,17 +5,20 @@ import {
   text,
   timestamp,
   uuid,
-  varchar,
 } from "drizzle-orm/pg-core";
-import { singlestoreEnum } from "drizzle-orm/singlestore-core";
-import { TransactionType } from "../domain/transaction.js";
 
-const TransactionTypeValues = Object.values(TransactionType) as [
-  TransactionType,
-  ...TransactionType[]
-];
+export enum TransactionType {
+  INCOME = "INCOME",
+  EXPENSE = "EXPENSE",
+}
 
-const transactionType = pgEnum("transaction_type", TransactionTypeValues);
+export function enumToPgEnum<T extends Record<string, any>>(
+  myEnum: T
+): [T[keyof T], ...T[keyof T][]] {
+  return Object.values(myEnum).map((value: any) => `${value}`) as any;
+}
+
+export const transactionEnum = pgEnum("type", enumToPgEnum(TransactionType));
 
 export const transactions = pgTable("transactions", {
   id: uuid("id").primaryKey(),
@@ -23,7 +26,7 @@ export const transactions = pgTable("transactions", {
   name: text("name").notNull(),
   category: text("category").notNull(),
   amount: numeric("amount").notNull(),
-  type: transactionType("type").notNull(),
+  type: transactionEnum("type").notNull(),
   date: timestamp("date").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at")

@@ -3,11 +3,9 @@ import { BankAccount } from "../modules/bankAccount/domain/bankAccount.js";
 import { BankAccountId } from "../modules/bankAccount/domain/bankAccountId.js";
 import { createUUID } from "../utils/createUUID.js";
 import { UserId } from "../modules/user/domain/userId.js";
-import {
-  Transaction,
-  TransactionType,
-} from "../modules/transactions/domain/transaction.js";
+import { Transaction } from "../modules/transactions/domain/transaction.js";
 import { TransactionId } from "../modules/transactions/domain/transactionId.js";
+import { TransactionType } from "../modules/transactions/infrastructure/transactionSchema.js";
 
 describe("Entities", () => {
   it("should create a BankAccount", () => {
