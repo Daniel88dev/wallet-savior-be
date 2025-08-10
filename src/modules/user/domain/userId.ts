@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const UserIdSchema = z.string().trim();
+const UserIdSchema = z.string().trim().min(1);
 
 export class UserId {
   public readonly value: string;

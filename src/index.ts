@@ -7,6 +7,8 @@ import { errorMiddleware } from "./middleware/errorMiddleware.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./utils/auth.js";
 import { logger } from "./middleware/logger.js";
+import bankAccountRoutes from "./modules/bankAccount/interfaces/bankAccountRoutes.js";
+import transactionRoutes from "./modules/transactions/interfaces/transactionRoutes.js";
 
 const app = express();
 
@@ -18,7 +20,8 @@ app.all("/auth/{*any}", toNodeHandler(auth));
 app.use(express.json());
 
 //routes
-
+app.use("/accounts", bankAccountRoutes);
+app.use("/transactions", transactionRoutes);
 app.get("/health", (_, res) => {
   res.status(200).json({ status: "ok" });
 });
