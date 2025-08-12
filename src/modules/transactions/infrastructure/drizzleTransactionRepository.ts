@@ -32,7 +32,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
       result[0].category,
       result[0].type,
       Number(result[0].amount),
-      result[0].date
+      new Date(result[0].date)
     );
   }
 
@@ -52,7 +52,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
           r.category,
           r.type,
           Number(r.amount),
-          r.date
+          new Date(r.date)
         )
     );
   }

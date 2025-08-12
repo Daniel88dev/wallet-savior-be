@@ -7,7 +7,13 @@ export const TransactionTypeSchema = z.enum(TransactionType);
 export const TransactionNameSchema = z.string().trim().min(1);
 export const TransactionCategorySchema = z.string().trim().min(1);
 export const TransactionAmountSchema = z.number().positive();
-export const TransactionDateSchema = z.date();
+export const TransactionDateSchema = z.preprocess((arg) => {
+  if (typeof arg === "string" || typeof arg === "number") {
+    const d = new Date(arg);
+    return isNaN(d.getTime()) ? undefined : d;
+  }
+  return arg;
+}, z.date());
 
 export class Transaction {
   public readonly id: TransactionId;
