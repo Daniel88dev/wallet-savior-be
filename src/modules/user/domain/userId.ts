@@ -12,8 +12,4 @@ export class UserId {
   equals(other: UserId): boolean {
     return this.value === other.value;
   }
-
-  get getValue(): string {
-    return this.value;
-  }
 }

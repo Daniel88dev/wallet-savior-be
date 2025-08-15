@@ -10,19 +10,15 @@ import { BankAccountId } from "../domain/bankAccountId.js";
 const bankAccountRepo = new DrizzleBankAccountRepository();
 const createBankAccount = new CreateBankAccount(bankAccountRepo);
 
-const createBankAccountSchema = z.object({
-  userId: z.string(),
-  name: BankAccountNameSchema,
-});
-
 export const createBankAccountHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const data = createBankAccountSchema.parse(req.body);
-    const account = await createBankAccount.execute(data.userId, data.name);
+    const accountName = BankAccountNameSchema.parse(req.body.name);
+    const auth = await getAuthSession(req);
+    const account = await createBankAccount.execute(auth.userId, accountName);
     res.status(201).json(account);
   } catch (err) {
     next(err);
@@ -61,7 +57,7 @@ export const getBankAccountById = async (
       throw new Error("notFound");
     }
 
-    if (account.userId.value !== auth.userId) {
+    if (!account.userId.equals(new UserId(auth.userId))) {
       throw new Error("noAccess");
     }
 

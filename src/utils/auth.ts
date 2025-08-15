@@ -5,7 +5,6 @@ import { tempEmailSend } from "./tempEmail.js";
 import { haveIBeenPwned } from "better-auth/plugins";
 import { Request } from "express";
 import { fromNodeHeaders } from "better-auth/node";
-import { UserId } from "../modules/user/domain/userId.js";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
