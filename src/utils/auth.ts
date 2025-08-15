@@ -41,9 +41,8 @@ export const auth = betterAuth({
   plugins: [haveIBeenPwned()],
 });
 
-type AuthSession = {
+export type AuthSession = {
   sessionId: string;
-  sessionToken: string;
   userId: string;
   userName: string;
   userEmail: string;
@@ -60,7 +59,6 @@ export const getAuthSession = async (
 
   return {
     sessionId: session.session.id,
-    sessionToken: session.session.token,
     userId: session.user.id,
     userName: session.user.name,
     userEmail: session.user.email,
