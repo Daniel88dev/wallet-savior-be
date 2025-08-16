@@ -15,7 +15,8 @@ export class CalculateMonthlySavings {
     month: number
   ): Promise<number> {
     const transactions = await this.transactionRepo.findByBankAccountId(
-      new BankAccountId(bankAccountId)
+      new BankAccountId(bankAccountId),
+      0
     );
 
     const monthlyTransactions = transactions.filter(

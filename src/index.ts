@@ -16,7 +16,7 @@ const app = express();
 app.use(serverCors);
 app.use(helmetHeaders);
 app.use(limiter);
-app.all("/auth/{*any}", toNodeHandler(auth));
+app.all("/api/auth/{*any}", toNodeHandler(auth));
 app.use(express.json());
 
 //routes

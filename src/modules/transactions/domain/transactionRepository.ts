@@ -5,5 +5,9 @@ import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
 export interface TransactionRepository {
   save(transaction: Transaction): Promise<void>;
   findById(id: TransactionId): Promise<Transaction | null>;
-  findByBankAccountId(bankAccountId: BankAccountId): Promise<Transaction[]>;
+  findByBankAccountId(
+    bankAccountId: BankAccountId,
+    page: number
+  ): Promise<Transaction[]>;
+  update(transaction: Transaction): Promise<Transaction>;
 }

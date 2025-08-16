@@ -41,8 +41,4 @@ export class Transaction {
     this.amount = TransactionAmountSchema.parse(amount);
     this.date = TransactionDateSchema.parse(date);
   }
-
-  changeName(newName: string) {
-    this.name = newName;
-  }
 }
