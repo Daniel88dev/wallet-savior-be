@@ -82,14 +82,13 @@ export const getBankAccountById = async (
 };
 
 export const getAccountWithTransactionsById = async (
-  req: Request<{ bankId: string }, any, any, ParsedQs & { page?: string }>,
+  req: Request<{ bankId: string }>,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const auth = await getAuthSession(req);
     const accountId = new BankAccountId(req.params.bankId);
-    const page = z.coerce.number().optional().default(0).parse(req.query.page);
 
     const account = await bankAccountRepo.findById(accountId);
     if (!account) {
@@ -100,10 +99,7 @@ export const getAccountWithTransactionsById = async (
       throw new Error("noAccess");
     }
 
-    const transactions = await transactionRepo.findByBankAccountId(
-      accountId,
-      page
-    );
+    const transactions = await transactionRepo.findByBankAccountId(accountId);
 
     res.status(200).json({
       id: account.id.value,

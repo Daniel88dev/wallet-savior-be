@@ -3,7 +3,7 @@ import { db } from "../../../db/db.js";
 import { transactions } from "./transactionSchema.js";
 import { TransactionId } from "../domain/transactionId.js";
 import { Transaction } from "../domain/transaction.js";
-import { eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
 
 export class DrizzleTransactionRepository implements TransactionRepository {
@@ -37,15 +37,14 @@ export class DrizzleTransactionRepository implements TransactionRepository {
   }
 
   async findByBankAccountId(
-    bankAccountId: BankAccountId,
-    page?: number
+    bankAccountId: BankAccountId
   ): Promise<Transaction[]> {
     const rows = await db
       .select()
       .from(transactions)
       .where(eq(transactions.bankAccountId, bankAccountId.value))
-      .limit(100)
-      .offset((page ?? 0) * 100);
+      .orderBy(desc(transactions.date), asc(transactions.id))
+      .limit(100);
     return rows.map(
       (r) =>
         new Transaction(
