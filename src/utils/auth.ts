@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db/db.js";
 import { tempEmailSend } from "./tempEmail.js";
-import { haveIBeenPwned } from "better-auth/plugins";
+import { haveIBeenPwned, openAPI } from "better-auth/plugins";
 import { Request } from "express";
 import { fromNodeHeaders } from "better-auth/node";
 
@@ -37,7 +37,7 @@ export const auth = betterAuth({
     window: 10,
     max: 5,
   },
-  plugins: [haveIBeenPwned()],
+  plugins: [haveIBeenPwned(), openAPI()],
 });
 
 export type AuthSession = {

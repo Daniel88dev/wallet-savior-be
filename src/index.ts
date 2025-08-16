@@ -9,6 +9,8 @@ import { auth } from "./utils/auth.js";
 import { logger } from "./middleware/logger.js";
 import bankAccountRoutes from "./modules/bankAccount/interfaces/bankAccountRoutes.js";
 import transactionRoutes from "./modules/transactions/interfaces/transactionRoutes.js";
+import { swaggerDocs } from "./middleware/swagger.js";
+import * as util from "node:util";
 
 const app = express();
 
@@ -20,8 +22,22 @@ app.all("/api/auth/{*any}", toNodeHandler(auth));
 app.use(express.json());
 
 //routes
-app.use("/accounts", bankAccountRoutes);
-app.use("/transactions", transactionRoutes);
+app.use("/api/accounts", bankAccountRoutes);
+app.use("/api/transactions", transactionRoutes);
+
+const openAPISchema = await auth.api.generateOpenAPISchema();
+console.log(util.inspect(openAPISchema, { depth: null, colors: true }));
+
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Health check
+ *     description: Returns basic server health status
+ *     responses:
+ *       '200':
+ *         description: Server is running
+ */
 app.get("/health", (_, res) => {
   res.status(200).json({ status: "ok" });
 });
@@ -29,5 +45,6 @@ app.get("/health", (_, res) => {
 app.use(errorMiddleware);
 
 app.listen(config.api.port, () => {
+  if (config.api.env === "dev") swaggerDocs(app, config.api.port);
   logger.info(`Server is running on port ${config.api.port}`);
 });
