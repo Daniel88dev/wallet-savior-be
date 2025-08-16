@@ -3,6 +3,8 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db/db.js";
 import { tempEmailSend } from "./tempEmail.js";
 import { haveIBeenPwned } from "better-auth/plugins";
+import { Request } from "express";
+import { fromNodeHeaders } from "better-auth/node";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -37,3 +39,28 @@ export const auth = betterAuth({
   },
   plugins: [haveIBeenPwned()],
 });
+
+export type AuthSession = {
+  sessionId: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  emailVerified: boolean;
+};
+
+export const getAuthSession = async (
+  request: Request
+): Promise<AuthSession> => {
+  const session = await auth.api.getSession({
+    headers: fromNodeHeaders(request.headers),
+  });
+  if (!session) throw new Error("notAuthenticated");
+
+  return {
+    sessionId: session.session.id,
+    userId: session.user.id,
+    userName: session.user.name,
+    userEmail: session.user.email,
+    emailVerified: session.user.emailVerified,
+  };
+};
