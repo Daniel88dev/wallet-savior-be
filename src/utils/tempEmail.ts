@@ -1,4 +1,4 @@
-import { logger } from "../middleware/logger.js";
+import { logger } from "./logger.js";
 
 type TempEmailType = {
   to: string;
