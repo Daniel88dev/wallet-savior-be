@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { logger } from "./logger.js";
+import { logger } from "../utils/logger.js";
 
 export const errorMiddleware = (
   err: Error,
@@ -7,7 +7,10 @@ export const errorMiddleware = (
   res: Response,
   _next: NextFunction
 ) => {
-  logger.error(err.stack);
+  logger.error(err.message, {
+    error: err,
+    stackTrace: err.stack,
+  });
   switch (err.message) {
     case "notFound":
       res.status(404).json({ message: "Searched resource not found" });

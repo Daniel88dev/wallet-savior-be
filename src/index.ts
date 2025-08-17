@@ -6,11 +6,10 @@ import { limiter } from "./middleware/limiter.js";
 import { errorMiddleware } from "./middleware/errorMiddleware.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./utils/auth.js";
-import { logger } from "./middleware/logger.js";
+import { logger } from "./utils/logger.js";
 import bankAccountRoutes from "./modules/bankAccount/interfaces/bankAccountRoutes.js";
 import transactionRoutes from "./modules/transactions/interfaces/transactionRoutes.js";
-import { swaggerDocs } from "./middleware/swagger.js";
-import * as util from "node:util";
+import { swaggerDocs } from "./utils/swagger.js";
 
 const app = express();
 
@@ -25,19 +24,6 @@ app.use(express.json());
 app.use("/api/accounts", bankAccountRoutes);
 app.use("/api/transactions", transactionRoutes);
 
-const openAPISchema = await auth.api.generateOpenAPISchema();
-console.log(util.inspect(openAPISchema, { depth: null, colors: true }));
-
-/**
- * @swagger
- * /health:
- *   get:
- *     summary: Health check
- *     description: Returns basic server health status
- *     responses:
- *       '200':
- *         description: Server is running
- */
 app.get("/health", (_, res) => {
   res.status(200).json({ status: "ok" });
 });
