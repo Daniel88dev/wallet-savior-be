@@ -133,7 +133,7 @@ security:
   - apiKeyCookie: []
     bearerAuth: []
 servers:
-  - url: http://localhost:8080/api/auth
+  - url: http://localhost:8080/
 tags:
   - name: Default
     description: Default endpoints that are included with Better Auth by default. These
