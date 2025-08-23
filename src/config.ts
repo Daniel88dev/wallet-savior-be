@@ -7,7 +7,7 @@ type Config = {
   authConf?: AuthConfig;
 };
 
-type APIConfig = { port: number; env: "prod" | "dev" | "test" };
+type APIConfig = { port: number; env: "production" | "dev" | "test" };
 
 type DBConfig = { database: string };
 
@@ -21,7 +21,7 @@ function envOrThrow(key: string) {
   return value;
 }
 
-const environment = envOrThrow("NODE_ENV") as "prod" | "dev" | "test";
+const environment = envOrThrow("NODE_ENV") as "production" | "dev" | "test";
 
 export const config: Config = {
   api: {
