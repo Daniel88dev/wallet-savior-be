@@ -21,11 +21,30 @@ function envOrThrow(key: string) {
   return value;
 }
 
-const environment = envOrThrow("NODE_ENV") as "production" | "dev" | "test";
+const VALID_ENVS = ["production", "dev", "test"] as const;
+type NodeEnv = (typeof VALID_ENVS)[number];
+
+function parseNodeEnv(value: string): NodeEnv {
+  const v = value.toLowerCase();
+  if (v === "prod") return "production"; // backward-compat
+  if ((VALID_ENVS as readonly string[]).includes(v)) return v as NodeEnv;
+  throw new Error(
+    `Invalid NODE_ENV: "${value}". Expected one of ${VALID_ENVS.join(", ")}`
+  );
+}
+
+const environment = parseNodeEnv(envOrThrow("NODE_ENV"));
 
 export const config: Config = {
   api: {
-    port: parseInt(envOrThrow("PORT")),
+    //port: parseInt(envOrThrow("PORT")),
+    port: (() => {
+      const raw = envOrThrow("PORT");
+      const n = Number.parseInt(raw, 10);
+      if (!Number.isFinite(n) || n <= 0)
+        throw new Error(`Invalid PORT: "${raw}"`);
+      return n;
+    })(),
     env: environment,
   },
   db: {
