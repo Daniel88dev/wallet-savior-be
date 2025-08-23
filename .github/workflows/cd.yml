@@ -69,6 +69,3 @@ jobs:
           docker buildx build --platform linux/amd64 \
              -t "${IMAGE_URI}:${IMAGE_TAG_SHA}" -t "${IMAGE_URI}:latest" \
              --push .
-
-          docker push "${IMAGE_URI}:${IMAGE_TAG_SHA}"
-          docker push "${IMAGE_URI}:latest"
