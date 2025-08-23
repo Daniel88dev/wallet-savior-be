@@ -1,0 +1,59 @@
+name: Build and Push to ECR
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image metadata
+        id: meta
+        run: |
+          echo "ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG_SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Ensure ECR repository exists
+        shell: bash
+        run: |
+          aws ecr describe-repositories --repository-names "${ECR_REPOSITORY}" >/dev/null 2>&1 || \
+          aws ecr create-repository --repository-name "${ ECR_REPOSITORY }" >/dev/null
+
+      - name: Build, tag, and push image
+        env:
+          ECR_REGISTRY: ${{ steps.meta.outputs.ECR_REGISTRY }}
+          IMAGE_TAG_SHA: ${{ steps.meta.outputs.image-tag-sha }}
+        run: |
+          IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}"
+          echo "Building ${IMAGE_URI}:${IMAGE_TAG_SHA} and ${IMAGE_URI}:latest"
+          
+          docker build -t "${IMAGE_URI}:${IMAGE_TAG_SHA}" -t "${IMAGE_URI}:latest" .
+          
+          docker push "${IMAGE_URI}:${IMAGE_TAG_SHA}"
+          docker push "${IMAGE_URI}:latest"
