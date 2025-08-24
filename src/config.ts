@@ -14,6 +14,7 @@ type DBConfig = { database: string };
 type AuthConfig = { secret: string; url: string };
 
 function envOrThrow(key: string) {
+  // eslint-disable-next-line security/detect-object-injection
   const value = process.env[key];
   if (!value) {
     throw new Error(`Missing environment variable: ${key}`);

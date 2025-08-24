@@ -14,10 +14,15 @@ export enum TransactionType {
   EXPENSE = "EXPENSE",
 }
 
-export function enumToPgEnum<T extends Record<string, any>>(
+export function enumToPgEnum<T extends Record<string, string>>(
   myEnum: T
 ): [T[keyof T], ...T[keyof T][]] {
-  return Object.values(myEnum).map((value: any) => `${value}`) as any;
+  const values = Object.values(myEnum) as T[keyof T][];
+  const [first, ...rest] = values;
+  if (!first) {
+    throw new Error("Enum must have at least one value");
+  }
+  return [first, ...rest];
 }
 
 export const transactionEnum = pgEnum("type", enumToPgEnum(TransactionType));

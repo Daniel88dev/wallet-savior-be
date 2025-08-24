@@ -67,14 +67,25 @@ jobs:
           IMAGE_TAG_SHA: ${{ steps.meta.outputs.IMAGE_TAG_SHA }}
         run: |
           IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}"
+          SHA_IMAGE_FULL_URI="${IMAGE_URI}:${IMAGE_TAG_SHA}"
+
+          echo "Building and pushing base image with SHA tag: ${SHA_IMAGE_FULL_URI}"
+
+          docker buildx create --use --name builder || docker buildx use builder
+
+          docker buildx build --platform linux/amd64 \
+             -t "${SHA_IMAGE_FULL_URI}" \
+             --push .
+
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             MOVING_TAG="latest"
           else
             MOVING_TAG="main"
           fi
-          echo "Building ${IMAGE_URI}:${IMAGE_TAG_SHA} and ${IMAGE_URI}:${MOVING_TAG}"
+          MOVING_IMAGE_FULL_URI="${IMAGE_URI}:${MOVING_TAG}"
 
-          docker buildx create --use --name builder || docker buildx use builder
-          docker buildx build --platform linux/amd64 \
-             -t "${IMAGE_URI}:${IMAGE_TAG_SHA}" -t "${IMAGE_URI}:${MOVING_TAG}" \
-             --push .
+          echo "Creating and pushing moving tag: ${MOVING_IMAGE_FULL_URI} pointing to ${SHA_IMAGE_FULL_URI}"
+
+          docker buildx imagetools create \
+             --tag "${MOVING_IMAGE_FULL_URI}" \
+             "${SHA_IMAGE_FULL_URI}"

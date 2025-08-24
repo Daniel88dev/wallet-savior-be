@@ -3,10 +3,11 @@ import path from "node:path";
 import fs from "node:fs";
 
 // Ensure the logs directory exists
-const LOG_DIR = process.env.LOG_DIR || path.resolve(process.cwd(), "logs");
+const LOG_DIR = path.resolve(process.cwd(), process.env.LOG_DIR ?? "logs");
 let fileTransports: InstanceType<typeof transports.File>[] = [];
 
 try {
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   fs.mkdirSync(LOG_DIR, { recursive: true });
   fileTransports = [
     new transports.File({
