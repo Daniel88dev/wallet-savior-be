@@ -7,6 +7,7 @@ type TempEmailType = {
 };
 
 export const tempEmailSend = async (emailData: TempEmailType) => {
+  await new Promise((resolve) => setTimeout(resolve, 25));
   logger.info(
     "Sending email to: " +
       emailData.to +

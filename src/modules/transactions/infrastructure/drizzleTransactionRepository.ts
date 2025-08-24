@@ -72,6 +72,8 @@ export class DrizzleTransactionRepository implements TransactionRepository {
       .where(eq(transactions.id, transaction.id.value))
       .returning();
 
+    if (!result[0]) throw new Error("notFound");
+
     return new Transaction(
       new TransactionId(result[0].id),
       new BankAccountId(result[0].bankAccountId),

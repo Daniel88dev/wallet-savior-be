@@ -8,6 +8,11 @@
     "strict": true,
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "exactOptionalPropertyTypes": false,
+    "allowUnreachableCode": false,
+    "noEmitOnError": true,
     "skipLibCheck": true
   },
   "include": ["./src/**/*.ts"],

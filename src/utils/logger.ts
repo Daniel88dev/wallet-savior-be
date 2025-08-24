@@ -3,7 +3,7 @@ import path from "node:path";
 import fs from "node:fs";
 
 // Ensure the logs directory exists
-const LOG_DIR = process.env.LOG_DIR || path.resolve(process.cwd(), "logs");
+const LOG_DIR = path.resolve(process.cwd(), "logs");
 let fileTransports: InstanceType<typeof transports.File>[] = [];
 
 try {

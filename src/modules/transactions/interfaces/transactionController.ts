@@ -3,7 +3,6 @@ import { AddTransaction } from "../application/addTransaction.js";
 import { CalculateMonthlySavings } from "../application/calculateMonthlySavings.js";
 import { DrizzleTransactionRepository } from "../infrastructure/drizzleTransactionRepository.js";
 import { z } from "zod";
-import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
 import {
   TransactionAmountSchema,
   TransactionCategorySchema,

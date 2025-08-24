@@ -5,16 +5,15 @@ import { NextFunction, Request, Response } from "express";
 import { UserId } from "../../user/domain/userId.js";
 import { BankAccountId } from "../domain/bankAccountId.js";
 import { DrizzleTransactionRepository } from "../../transactions/infrastructure/drizzleTransactionRepository.js";
-import { z } from "zod";
-import type { ParsedQs } from "qs";
 import { getAuthSession } from "../../../utils/getAuthSession.js";
+import { ProjectError } from "../../../middleware/errorMiddleware.js";
 
 const bankAccountRepo = new DrizzleBankAccountRepository();
 const createBankAccount = new CreateBankAccount(bankAccountRepo);
 const transactionRepo = new DrizzleTransactionRepository();
 
 export const createBankAccountHandler = async (
-  req: Request,
+  req: Request<Record<string, string>, unknown, { name: string }>,
   res: Response,
   next: NextFunction
 ) => {
@@ -65,11 +64,14 @@ export const getBankAccountById = async (
 
     const account = await bankAccountRepo.findById(accountId);
     if (!account) {
-      throw new Error("notFound");
+      throw new ProjectError({
+        name: "notFound",
+        message: "No Bank Account found",
+      });
     }
 
     if (!account.userId.equals(new UserId(auth.userId))) {
-      throw new Error("noAccess");
+      throw new ProjectError({ name: "noAccess", message: "No Access" });
     }
 
     res.status(200).json({
@@ -92,11 +94,14 @@ export const getAccountWithTransactionsById = async (
 
     const account = await bankAccountRepo.findById(accountId);
     if (!account) {
-      throw new Error("notFound");
+      throw new ProjectError({
+        name: "notFound",
+        message: "No Bank Account found",
+      });
     }
 
     if (!account.userId.equals(new UserId(auth.userId))) {
-      throw new Error("noAccess");
+      throw new ProjectError({ name: "noAccess", message: "No Access" });
     }
 
     const transactions = await transactionRepo.findByBankAccountId(accountId);
