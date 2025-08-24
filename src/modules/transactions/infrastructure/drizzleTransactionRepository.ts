@@ -5,6 +5,7 @@ import { TransactionId } from "../domain/transactionId.js";
 import { Transaction } from "../domain/transaction.js";
 import { asc, desc, eq } from "drizzle-orm";
 import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
+import { ProjectError } from "../../../middleware/errorMiddleware.js";
 
 export class DrizzleTransactionRepository implements TransactionRepository {
   async save(transaction: Transaction): Promise<void> {
@@ -72,7 +73,11 @@ export class DrizzleTransactionRepository implements TransactionRepository {
       .where(eq(transactions.id, transaction.id.value))
       .returning();
 
-    if (!result[0]) throw new Error("notFound");
+    if (!result[0])
+      throw new ProjectError({
+        name: "notFound",
+        message: "Transaction not found",
+      });
 
     return new Transaction(
       new TransactionId(result[0].id),

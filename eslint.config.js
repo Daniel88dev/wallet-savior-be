@@ -31,6 +31,7 @@ export default [
       security: securityPlugin,
     },
     languageOptions: {
+      parser: tseslint.parser,
       parserOptions: {
         // Type-aware rules require your tsconfig
         project: ["./tsconfig.json"],
