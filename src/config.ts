@@ -9,7 +9,7 @@ type Config = {
 
 type APIConfig = { port: number; env: "production" | "dev" | "test" };
 
-type DBConfig = { database: string };
+type DBConfig = { database: string; DB_SSL_CA_PATH?: string };
 
 type AuthConfig = { secret: string; url: string };
 
@@ -20,6 +20,11 @@ function envOrThrow(key: string) {
     throw new Error(`Missing environment variable: ${key}`);
   }
   return value;
+}
+
+function envOrMaybe(key: string) {
+  // eslint-disable-next-line security/detect-object-injection
+  return process.env[key];
 }
 
 const VALID_ENVS = ["production", "dev", "test"] as const;
@@ -38,7 +43,6 @@ const environment = parseNodeEnv(envOrThrow("NODE_ENV"));
 
 export const config: Config = {
   api: {
-    //port: parseInt(envOrThrow("PORT")),
     port: (() => {
       const raw = envOrThrow("PORT");
       const n = Number.parseInt(raw, 10);
@@ -50,6 +54,7 @@ export const config: Config = {
   },
   db: {
     database: envOrThrow("DATABASE"),
+    DB_SSL_CA_PATH: envOrMaybe("DB_SSL_CA_PATH"),
   },
   authConf:
     environment !== "test"
