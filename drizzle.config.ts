@@ -2,13 +2,13 @@ import { defineConfig } from "drizzle-kit";
 // @ts-ignore
 import { config } from "./src/config";
 import path from "path";
+import { homedir } from "os";
 
-function expandHome(p?: string) {
+function expandHome(p?: string): string | undefined {
   if (!p) return p;
-  if (p.startsWith("~")) {
-    const home = process.env.HOME || process.env.USERPROFILE;
-    if (!home) return p;
-    return path.join(home, p.slice(1));
+  if (p === "~") return homedir();
+  if (p.startsWith("~/") || p.startsWith("~\\")) {
+    return path.join(homedir(), p.slice(2));
   }
   return p;
 }
