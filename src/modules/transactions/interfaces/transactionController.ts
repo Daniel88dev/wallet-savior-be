@@ -10,6 +10,7 @@ import {
   TransactionNameSchema,
   TransactionTypeSchema,
 } from "../domain/transaction.js";
+import { getAuthSession } from "../../../utils/getAuthSession.js";
 
 const transactionRepo = new DrizzleTransactionRepository();
 const addTransaction = new AddTransaction(transactionRepo);
@@ -30,6 +31,7 @@ export const addTransactionHandler = async (
   next: NextFunction
 ) => {
   try {
+    await getAuthSession(req);
     const data = transactionSchema.parse(req.body);
     const transaction = await addTransaction.execute(
       data.bankAccountId,
@@ -51,6 +53,7 @@ export const calculateSavingsHandler = async (
   next: NextFunction
 ) => {
   try {
+    await getAuthSession(req);
     const querySchema = z.object({
       bankAccountId: z.uuid(),
       year: z.string().transform(Number),
