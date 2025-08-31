@@ -12,9 +12,9 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
       id: account.id.value,
       userId: account.userId.value,
       name: account.name,
-      overdraft: String(account.overdraft),
+      overdraft: account.overdraft,
       currency: account.currency,
-      balance: String(account.balance),
+      balance: account.balance,
     });
   }
 
@@ -28,9 +28,9 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
       new BankAccountId(result[0].id),
       new UserId(result[0].userId),
       result[0].name,
-      parseFloat(result[0].overdraft),
+      result[0].overdraft,
       result[0].currency,
-      parseFloat(result[0].balance)
+      result[0].balance
     );
   }
 

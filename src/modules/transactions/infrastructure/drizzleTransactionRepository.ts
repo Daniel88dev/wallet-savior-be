@@ -15,7 +15,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
       name: transaction.name,
       category: transaction.category,
       type: transaction.type,
-      amount: String(transaction.amount),
+      amount: transaction.amount,
       date: transaction.date.toISOString(),
     });
   }
@@ -32,7 +32,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
       result[0].name,
       result[0].category,
       result[0].type,
-      Number(result[0].amount),
+      result[0].amount,
       new Date(result[0].date)
     );
   }
@@ -54,7 +54,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
           r.name,
           r.category,
           r.type,
-          Number(r.amount),
+          r.amount,
           new Date(r.date)
         )
     );
@@ -67,7 +67,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
         name: transaction.name,
         category: transaction.category,
         type: transaction.type,
-        amount: String(transaction.amount),
+        amount: transaction.amount,
         date: transaction.date.toISOString(),
       })
       .where(eq(transactions.id, transaction.id.value))
@@ -85,7 +85,7 @@ export class DrizzleTransactionRepository implements TransactionRepository {
       result[0].name,
       result[0].category,
       result[0].type,
-      Number(result[0].amount),
+      result[0].amount,
       new Date(result[0].date)
     );
   }
