@@ -28,9 +28,9 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
       new BankAccountId(result[0].id),
       new UserId(result[0].userId),
       result[0].name,
-      +result[0].overdraft,
+      parseFloat(result[0].overdraft),
       result[0].currency,
-      +result[0].balance
+      parseFloat(result[0].balance)
     );
   }
 
