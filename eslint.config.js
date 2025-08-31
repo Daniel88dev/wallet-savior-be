@@ -14,7 +14,9 @@ export default [
       "build/**",
       ".turbo/**",
       "drizzle.config.ts",
-      "eslint.config.js"
+      "eslint.config.js",
+      "vitest.config.ts",
+      "src/tests/**"
     ],
   },
 
