@@ -41,9 +41,6 @@ jobs:
           echo "PORT=8080" >> $GITHUB_ENV
           echo "NODE_ENV=test" >> $GITHUB_ENV
           echo "DATABASE=postgresql://postgres:password@localhost:5432/testdb" >> $GITHUB_ENV
-          # CI uses a local ephemeral Postgres; no CA file available. Disable strict TLS checks.
-          echo "DB_SSL_CA_PATH=" >> $GITHUB_ENV
-          echo "DB_SSL_REJECT_UNAUTHORIZED=0" >> $GITHUB_ENV
           echo "BETTER_AUTH_SECRET=$(openssl rand -base64 32)" >> $GITHUB_ENV
           echo "BETTER_AUTH_URL=http://localhost:8080" >> $GITHUB_ENV
 

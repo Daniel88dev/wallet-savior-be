@@ -36,11 +36,6 @@ jobs:
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Ensure DB SSL env defaults (no CA used during build)
-        run: |
-          echo "DB_SSL_CA_PATH=" >> $GITHUB_ENV
-          echo "DB_SSL_REJECT_UNAUTHORIZED=1" >> $GITHUB_ENV
-
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
