@@ -1,26 +1,50 @@
 import { DrizzleBankAccountRepository } from "../infrastructure/drizzleBankAccountRepository.js";
 import { CreateBankAccount } from "../application/createBankAccount.js";
-import { BankAccountNameSchema } from "../domain/bankAccount.js";
+import {
+  BankAccountBalanceSchema,
+  BankAccountCurrencySchema,
+  BankAccountNameSchema,
+  BankAccountOverdraftSchema,
+} from "../domain/bankAccount.js";
 import { NextFunction, Request, Response } from "express";
 import { UserId } from "../../user/domain/userId.js";
 import { BankAccountId } from "../domain/bankAccountId.js";
 import { DrizzleTransactionRepository } from "../../transactions/infrastructure/drizzleTransactionRepository.js";
 import { getAuthSession } from "../../../utils/getAuthSession.js";
 import { ProjectError } from "../../../middleware/errorMiddleware.js";
+import { CurrencyType } from "../infrastructure/bankAccountSchema.js";
+import { z } from "zod";
 
 const bankAccountRepo = new DrizzleBankAccountRepository();
 const createBankAccount = new CreateBankAccount(bankAccountRepo);
 const transactionRepo = new DrizzleTransactionRepository();
 
+const bankAccountSchema = z.object({
+  name: BankAccountNameSchema,
+  overdraft: BankAccountOverdraftSchema,
+  currency: BankAccountCurrencySchema,
+  balance: BankAccountBalanceSchema,
+});
+
 export const createBankAccountHandler = async (
-  req: Request<Record<string, string>, unknown, { name: string }>,
+  req: Request<
+    Record<string, string>,
+    unknown,
+    { name: string; overdraft: number; currency: CurrencyType; balance: number }
+  >,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const accountName = BankAccountNameSchema.parse(req.body.name);
+    const data = bankAccountSchema.parse(req.body);
     const auth = await getAuthSession(req);
-    const account = await createBankAccount.execute(auth.userId, accountName);
+    const account = await createBankAccount.execute(
+      auth.userId,
+      data.name,
+      data.overdraft,
+      data.currency,
+      data.balance
+    );
     res.status(201).json({
       id: account.id.value,
       name: account.name,

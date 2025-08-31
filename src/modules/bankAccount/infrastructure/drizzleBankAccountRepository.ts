@@ -12,6 +12,9 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
       id: account.id.value,
       userId: account.userId.value,
       name: account.name,
+      overdraft: String(account.overdraft),
+      currency: account.currency,
+      balance: String(account.balance),
     });
   }
 
@@ -24,7 +27,10 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
     return new BankAccount(
       new BankAccountId(result[0].id),
       new UserId(result[0].userId),
-      result[0].name
+      result[0].name,
+      +result[0].overdraft,
+      result[0].currency,
+      +result[0].balance
     );
   }
 
@@ -35,7 +41,14 @@ export class DrizzleBankAccountRepository implements BankAccountRepository {
       .where(eq(bankAccounts.userId, userId.value));
     return rows.map(
       (r) =>
-        new BankAccount(new BankAccountId(r.id), new UserId(r.userId), r.name)
+        new BankAccount(
+          new BankAccountId(r.id),
+          new UserId(r.userId),
+          r.name,
+          +r.overdraft,
+          r.currency,
+          +r.balance
+        )
     );
   }
 }
