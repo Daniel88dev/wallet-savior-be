@@ -34,7 +34,7 @@ export const transactions = pgTable(
     bankAccountId: uuid("bank_account_id").notNull(),
     name: text("name").notNull(),
     category: text("category").notNull(),
-    amount: numeric("amount").notNull(),
+    amount: numeric("amount", { mode: "number" }).notNull(),
     type: transactionEnum("type").notNull(),
     date: date("date").notNull(),
     createdAt: timestamp("created_at").defaultNow(),

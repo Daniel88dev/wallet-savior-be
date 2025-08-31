@@ -33,7 +33,7 @@ export const bankAccounts = pgTable("bank_accounts", {
   id: uuid("id").primaryKey(),
   userId: text("user_id").notNull(),
   name: text("name").notNull(),
-  overdraft: numeric("overdraft").notNull(),
+  overdraft: numeric("overdraft", { mode: "number" }).notNull(),
   currency: currencyEnum("currency").notNull(),
-  balance: numeric("balance").notNull(),
+  balance: numeric("balance", { mode: "number" }).notNull(),
 });
