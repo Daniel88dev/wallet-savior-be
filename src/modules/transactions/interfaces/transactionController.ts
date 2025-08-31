@@ -11,10 +11,14 @@ import {
   TransactionTypeSchema,
 } from "../domain/transaction.js";
 import { getAuthSession } from "../../../utils/getAuthSession.js";
+import { DrizzleBankAccountRepository } from "../../bankAccount/infrastructure/drizzleBankAccountRepository.js";
+import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
+import { ProjectError } from "../../../middleware/errorMiddleware.js";
 
 const transactionRepo = new DrizzleTransactionRepository();
 const addTransaction = new AddTransaction(transactionRepo);
 const calculateSavings = new CalculateMonthlySavings(transactionRepo);
+const bankAccountRepo = new DrizzleBankAccountRepository();
 
 const transactionSchema = z.object({
   bankAccountId: z.uuid(),
@@ -31,8 +35,26 @@ export const addTransactionHandler = async (
   next: NextFunction
 ) => {
   try {
-    await getAuthSession(req);
+    const auth = await getAuthSession(req);
     const data = transactionSchema.parse(req.body);
+    const account = await bankAccountRepo.findById(
+      new BankAccountId(data.bankAccountId)
+    );
+
+    if (!account) {
+      throw new ProjectError({
+        name: "notFound",
+        message: "Bank Account not found",
+      });
+    }
+
+    if (auth.userId !== account.userId.value) {
+      throw new ProjectError({
+        name: "noAccess",
+        message: "No Access to related Bank Account",
+      });
+    }
+
     const transaction = await addTransaction.execute(
       data.bankAccountId,
       data.name,

@@ -7,6 +7,7 @@ import { auth } from "./utils/auth.js";
 import bankAccountRoutes from "./modules/bankAccount/interfaces/bankAccountRoutes.js";
 import { config } from "./config.js";
 import { errorMiddleware } from "./middleware/errorMiddleware.js";
+import transactionRoutes from "./modules/transactions/interfaces/transactionRoutes.js";
 
 export const createServer = () => {
   const app = express();
@@ -18,7 +19,7 @@ export const createServer = () => {
     .use(express.json());
 
   app.use("/api/accounts", bankAccountRoutes);
-  app.use("/api/transactions", bankAccountRoutes);
+  app.use("/api/transactions", transactionRoutes);
 
   app.get("/health", (_, res) => {
     res.status(200).json({ ok: true, environment: config.api.env });
