@@ -14,9 +14,11 @@ import { getAuthSession } from "../../../utils/getAuthSession.js";
 import { DrizzleBankAccountRepository } from "../../bankAccount/infrastructure/drizzleBankAccountRepository.js";
 import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
 import { ProjectError } from "../../../middleware/errorMiddleware.js";
+import { AddTransactions } from "../application/addTransactions.js";
 
 const transactionRepo = new DrizzleTransactionRepository();
 const addTransaction = new AddTransaction(transactionRepo);
+const addTransactions = new AddTransactions(transactionRepo);
 const calculateSavings = new CalculateMonthlySavings(transactionRepo);
 const bankAccountRepo = new DrizzleBankAccountRepository();
 
@@ -64,6 +66,50 @@ export const addTransactionHandler = async (
       data.date
     );
     res.status(201).json(transaction);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const addTransactionsHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const auth = await getAuthSession(req);
+    const data = transactionSchema
+      .array()
+      .nonempty("At least one transaction is required")
+      .parse(req.body);
+    for (const a of new Set(data.map((t) => t.bankAccountId))) {
+      const userAccount = await bankAccountRepo.findById(new BankAccountId(a));
+      if (!userAccount) {
+        throw new ProjectError({
+          name: "notFound",
+          message: "Bank Account not found",
+        });
+      }
+      if (auth.userId !== userAccount.userId.value) {
+        throw new ProjectError({
+          name: "noAccess",
+          message: "No Access to related Bank Account",
+        });
+      }
+    }
+
+    const transactions = await addTransactions.execute(
+      data.map((t) => ({
+        bankAccountId: t.bankAccountId,
+        name: t.name,
+        category: t.category,
+        amount: t.amount,
+        type: t.type,
+        date: t.date,
+      }))
+    );
+
+    res.status(201).json(transactions);
   } catch (err) {
     next(err);
   }
