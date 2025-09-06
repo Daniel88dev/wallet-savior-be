@@ -9,15 +9,32 @@ import { ProjectError } from "../../../middleware/errorMiddleware.js";
 
 export class DrizzleTransactionRepository implements TransactionRepository {
   async save(transaction: Transaction): Promise<void> {
-    await db.insert(transactions).values({
-      id: transaction.id.value,
-      bankAccountId: transaction.bankAccountId.value,
-      name: transaction.name,
-      category: transaction.category,
-      type: transaction.type,
-      amount: transaction.amount,
-      date: transaction.date.toISOString(),
-    });
+    await db
+      .insert(transactions)
+      .values({
+        id: transaction.id.value,
+        bankAccountId: transaction.bankAccountId.value,
+        name: transaction.name,
+        category: transaction.category,
+        type: transaction.type,
+        amount: transaction.amount,
+        date: transaction.date.toISOString(),
+      })
+      .returning();
+  }
+
+  async saveAll(transactionRecords: Transaction[]): Promise<void> {
+    await db.insert(transactions).values(
+      transactionRecords.map((transaction) => ({
+        id: transaction.id.value,
+        bankAccountId: transaction.bankAccountId.value,
+        name: transaction.name,
+        category: transaction.category,
+        type: transaction.type,
+        amount: transaction.amount,
+        date: transaction.date.toISOString(),
+      }))
+    );
   }
 
   async findById(id: TransactionId): Promise<Transaction | null> {
