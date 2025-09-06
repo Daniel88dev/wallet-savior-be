@@ -1,5 +1,5 @@
 import { TransactionRepository } from "../domain/transactionRepository.js";
-import { TransactionType } from "../infrastructure/transactionSchema.js";
+import type { TransactionType } from "../infrastructure/transactionSchema.js";
 import { Transaction } from "../domain/transaction.js";
 import { BankAccountId } from "../../bankAccount/domain/bankAccountId.js";
 import { TransactionId } from "../domain/transactionId.js";

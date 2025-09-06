@@ -78,7 +78,10 @@ export const addTransactionsHandler = async (
 ) => {
   try {
     const auth = await getAuthSession(req);
-    const data = transactionSchema.array().parse(req.body);
+    const data = transactionSchema
+      .array()
+      .nonempty("At least one transaction is required")
+      .parse(req.body);
     for (const a of new Set(data.map((t) => t.bankAccountId))) {
       const userAccount = await bankAccountRepo.findById(new BankAccountId(a));
       if (!userAccount) {
